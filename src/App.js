@@ -4,44 +4,33 @@ import Movie from './Movie.js';
 
 
 class App extends Component {
-    state = {
-    }
+    state = {}
 
     componentWillMount() {
     }
 
     componentDidMount() {
-        setTimeout(() => {
-            this.setState({
-                movies: [
-                    {
-                        title: "Coco",
-                        poster: "https://vignette.wikia.nocookie.net/disney/images/6/62/Coco_Vive_Tu_Momento_Poster.jpg/revision/latest?cb=20171016153046&format=original"
-                    },
-                    {
-                        title: "Big fish",
-                        poster: "https://pics.filmaffinity.com/big_fish-838287233-large.jpg"
-                    },
-                    {
-                        title: "Her",
-                        poster: "http://www.trespassmag.com/wp-content/uploads/2014/01/HER-A4poster.jpg"
-                    },
-                    {
-                        title: "Zootopia",
-                        poster: "https://images-na.ssl-images-amazon.com/images/I/71-Fj-WsM7L._SY550_.jpg"
-                    },
-                    {
-                        title: "Alice",
-                        poster: "https://images-na.ssl-images-amazon.com/images/I/71-Fj-WsM7L._SY550_.jpg"
-                    }
-                ]
-            })
-        }, 3000);
+        this._getMovies()
+    }
+
+    _getMovies = async () => {
+        const movies = await this._callApi(); // await은 성공적인 수행이 끝나길 기다리는게 아니라 그냥 작동 수행을 끝나길 기다림
+        this.setState({
+            movies: movies
+        })
+     }
+
+    _callApi = () => {
+        return fetch('https://yts.am/api/v2/list_movies.json?sort_by=rating')
+            .then(potato => potato.json())
+            .then(json => json.data.movies)
+            .catch(err => console.log(err) )
     }
 
     _renderMovies = () => {
-        const movies = this.state.movies.map((movie, index) => {
-            return <Movie title={movie.title} poster={movie.poster} key={index} />
+        const movies = this.state.movies.map((movie) => {
+            console.log(movie)
+            return <Movie title={movie.title} poster={movie.large_cover_image} key={movie.id} />
         });
         return movies;
     }
