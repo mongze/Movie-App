@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './Movie.css';
+import LinesEllipsis from 'react-lines-ellipsis';
 
 // dumb component: has not state, render function, will mount, did mount
 function Movie({title,poster,genres,rating,synopsis}) {
@@ -10,26 +11,47 @@ function Movie({title,poster,genres,rating,synopsis}) {
                 <MoviePoster poster={poster} alt={title} />
             </span>
             <div className="text_area">
-                <h3 className="movie_title">{ title }</h3>
+                <h3 className="movie_title">{title}</h3>
                 <div className="genres">
                     {genres.map((genre, index) => <MovieGenres genres={genre} key={index}/>)}
                 </div>
-                <em className="rating">{rating}</em>
-                <p className="synopsis">{synopsis}</p>
+                <Rating rating={rating}/>
+                <div className="synopsis">
+                    <LinesEllipsis
+                        text={synopsis}
+                        maxLine='3'
+                        ellipsis='...'
+                        trimRight=''
+                        baseOn='letters'
+                     />
+                </div>
             </div>
         </section>
     )
 }
 
+function Rating({rating}) {
+    var Style = {
+        width: rating*10
+    }
+    return (
+        <div className="rating">
+            <em style={Style} className="rating_star"/>
+            <em className="rating_number">{rating}</em>
+        </div>
+
+    )
+}
+
 function MoviePoster({poster,alt}) {
     return (
-        <img src={poster} width="200" height="300" alt={alt} title={alt} className="movie_poster"/>
+        <img src={poster} alt={alt} title={alt} className="movie_poster"/>
     )
 }
 
 function MovieGenres({genres}) {
     return (
-        <span className="genre_name ">{genres}</span>
+        <span className="genre_name">{genres}</span>
     )
 }
 
@@ -47,7 +69,7 @@ MoviePoster.propTypes = {
 }
 
 MovieGenres.propTypes = {
-    genres: PropTypes.array.isRequired
+    genres: PropTypes.string.isRequired
 }
 
 export default Movie;
